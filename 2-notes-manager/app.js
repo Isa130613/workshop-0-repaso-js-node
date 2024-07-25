@@ -138,7 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
     container.appendChild(sendButton);
 
     sendButton.addEventListener('click', () => {
-      if (newNote) {
+      if (newNote.value) {
         noteManager.addNote(newNote.value);
       }
       newNote.remove();
