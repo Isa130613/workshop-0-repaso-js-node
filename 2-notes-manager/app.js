@@ -140,6 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
     sendButton.addEventListener('click', () => {
       if (newNote.value) {
         noteManager.addNote(newNote.value);
+      } else {
+        alert('Note description empty, please try again');
       }
       newNote.remove();
       sendButton.remove();
