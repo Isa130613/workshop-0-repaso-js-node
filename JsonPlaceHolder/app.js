@@ -19,16 +19,16 @@ const fetchPosts = () => {
 };
 
 const displayPosts = (posts) => {
-  const postList = document.getElementById('post-list');
-  postList.innerHTML = '';
+  const posts = document.getElementById('post-list');
+  posts.innerHTML = '';
   posts.forEach((post) => {
     const listItem = document.createElement('li');
     listItem.textContent = `Title: ${post.title}`;
-    postList.appendChild(listItem);
+    posts.appendChild(listItem);
   });
 };
 
 const displayError = (error) => {
   const errorMessage = document.getElementById('error-message');
-  errorMessage.textContent = `Error: ${error.message}`;
+  errorMessage.textContent = error.message;
 };

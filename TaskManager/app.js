@@ -1,27 +1,20 @@
-// clase Task y sus métodos
 class Task {
-  //constructor para crear nuevas instancias
   constructor(id, description, completed = false) {
     this.id = id;
     this.description = description;
     this.completed = completed;
   }
 
-  // método para completar o descompletar tarea
-
   toggleComplete() {
     this.completed = !this.completed;
-    console.log(this);
   }
 }
 
-// función manejador de tareas
-
 class TaskManager {
-  // método constructor
   constructor() {
-    this.tasks = this.loadTasks();
-    this.renderTasks();
+    localStorage.getItem('notes') === '' && localStorage.removeItem('notes');
+    this.tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+    this.loadTasks();
   }
 
   addTask(description) {
@@ -38,10 +31,33 @@ class TaskManager {
     this.renderTasks();
   }
 
+  editTask(id) {
+    let newDescription = '';
+    while (!newDescription) {
+      newDescription = prompt('New Task description');
+      if (!newDescription) {
+        alert('Description must be provided');
+      } else {
+        break;
+      }
+    }
+    this.tasks.forEach(
+      (task) =>
+        (task.description = id === task.id ? newDescription : task.description)
+    );
+    this.saveTasks();
+    this.renderTasks();
+  }
+
   toggleTaskComplete(id) {
-    const task = this.tasks.find((task) => task.id === id);
+    let task = this.tasks.find((task) => task.id === id);
+    task = new Task(task.id, task.description, task.completed);
     if (task) {
       task.toggleComplete();
+
+      this.tasks.forEach((task_) => {
+        task_.completed = id === task_.id ? task.completed : task_.completed;
+      });
       this.saveTasks();
       this.renderTasks();
     }
@@ -52,10 +68,7 @@ class TaskManager {
   }
 
   loadTasks() {
-    const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    return tasks.map(
-      (task) => new Task(task.id, task.description, task.completed)
-    ); // se cambió el flujo para poder usar la función de completar tarea en la clase Task, ya que al traer las tareas del local storage pierden el método toggleComplete
+    this.renderTasks();
   }
 
   renderTasks() {
@@ -70,11 +83,21 @@ class TaskManager {
       const deleteButton = document.createElement('button');
       deleteButton.textContent = 'Eliminar';
       deleteButton.addEventListener('click', (e) => {
-        e.stopPropagation(); // Evitar que el evento se propague al elemento padre, ¿Por qué? Porque el evento click en el botón también se propaga al elemento li.
+        e.stopPropagation();
         this.deleteTask(task.id);
       });
 
       item.appendChild(deleteButton);
+
+      const editButton = document.createElement('button');
+      editButton.textContent = 'Editar';
+      editButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.editTask(task.id);
+      });
+
+      item.appendChild(editButton);
+
       taskList.appendChild(item);
     });
   }
